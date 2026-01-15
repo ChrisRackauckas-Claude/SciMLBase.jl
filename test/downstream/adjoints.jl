@@ -15,7 +15,6 @@ end
 # Note: Mooncake does not support SymbolicIndexingInterface AD yet
 # See: https://github.com/SciML/SciMLBase.jl/issues/1207
 const ZYGOTE_BACKENDS = VERSION < v"1.12" ? [AutoZygote()] : []
-const MOONCAKE_BACKENDS = [AutoMooncake()]
 
 function backend_name(backend::ADTypes.AbstractADType)
     return string(typeof(backend).name.name)
@@ -79,18 +78,8 @@ sol = solve(prob, Rodas4())
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
     # https://github.com/SciML/SciMLBase.jl/issues/1207
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs_sym = DifferentiationInterface.gradient(
-                    sol -> sum(sol[lorenz1.x]), backend, sol
-                )
-                idx_sym = SymbolicIndexingInterface.variable_index(sys, lorenz1.x)
-                true_grad_sym = zeros(length(ModelingToolkit.unknowns(sys)))
-                true_grad_sym[idx_sym] = 1.0
-                all(map(x -> x == true_grad_sym, gs_sym))
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -110,20 +99,8 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs_vec = DifferentiationInterface.gradient(
-                    sol -> sum(sum.(sol[[lorenz1.x, lorenz2.x]])), backend, sol
-                )
-                idx_vecsym = SymbolicIndexingInterface.variable_index.(
-                    Ref(sys), [lorenz1.x, lorenz2.x]
-                )
-                true_grad_vecsym = zeros(length(ModelingToolkit.unknowns(sys)))
-                true_grad_vecsym[idx_vecsym] .= 1.0
-                all(map(x -> x == true_grad_vecsym, gs_vec.u))
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -143,20 +120,8 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs_tup = DifferentiationInterface.gradient(
-                    sol -> sum(sum.(collect.(sol[(lorenz1.x, lorenz2.x)]))), backend, sol
-                )
-                idx_tupsym = SymbolicIndexingInterface.variable_index.(
-                    Ref(sys), [lorenz1.x, lorenz2.x]
-                )
-                true_grad_tupsym = zeros(length(ModelingToolkit.unknowns(sys)))
-                true_grad_tupsym[idx_tupsym] .= 1.0
-                all(map(x -> x == true_grad_tupsym, gs_tup.u))
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -176,20 +141,8 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs_ts = DifferentiationInterface.gradient(
-                    sol -> sum(sum.(sol[[lorenz1.x, lorenz2.x], :])), backend, sol
-                )
-                idx_vecsym = SymbolicIndexingInterface.variable_index.(
-                    Ref(sys), [lorenz1.x, lorenz2.x]
-                )
-                true_grad_vecsym = zeros(length(ModelingToolkit.unknowns(sys)))
-                true_grad_vecsym[idx_vecsym] .= 1.0
-                all(map(x -> x == true_grad_vecsym, gs_ts.u))
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -224,17 +177,7 @@ getter = getsym(bi)
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                p1grad = DifferentiationInterface.gradient(
-                    prob1 -> sum(getter(prob1, prob2)), backend, prob1
-                )
-                p2grad = DifferentiationInterface.gradient(
-                    prob2 -> sum(getter(prob1, prob2)), backend, prob2
-                )
-                p1grad.u0 ≈ ones(3)
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end

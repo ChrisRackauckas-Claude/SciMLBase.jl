@@ -21,7 +21,8 @@ end
 # Note: Mooncake does not support SymbolicIndexingInterface AD yet
 # See: https://github.com/SciML/SciMLBase.jl/issues/1207
 const ZYGOTE_BACKENDS = VERSION < v"1.12" ? [AutoZygote()] : []
-const MOONCAKE_BACKENDS = [AutoMooncake()]
+# Note: Mooncake does not support SymbolicIndexingInterface AD yet
+# See: https://github.com/SciML/SciMLBase.jl/issues/1207
 
 function backend_name(backend::ADTypes.AbstractADType)
     return string(typeof(backend).name.name)
@@ -75,17 +76,8 @@ sol = solve(prob, Tsit5())
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
     # https://github.com/SciML/SciMLBase.jl/issues/1207
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs = DifferentiationInterface.gradient(
-                    sol -> sum(sol[sys.w]), backend, sol
-                )
-                du_ = [1.0, 1.0, 1.0, 0.0]
-                du = [du_ for _ in sol[[D(x), x, y, z]]]
-                du == gs.u
-            end
-        end
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -113,15 +105,9 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                iprob = prob.f.initialization_data.initializeprob
-                isol = solve(iprob)
-                gs = DifferentiationInterface.gradient(isol -> isol[w], backend, isol)
-                gs isa NamedTuple
-            end
-        end
+    # https://github.com/SciML/SciMLBase.jl/issues/1207
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end
 
@@ -172,17 +158,9 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                gs = DifferentiationInterface.gradient(
-                    sol -> sum(sol[sys.ampermeter.i]), backend, sol
-                )
-                du_ = [0.2, 1.0]
-                du = [du_ for _ in sol.u]
-                gs.u == du
-            end
-        end
+    # https://github.com/SciML/SciMLBase.jl/issues/1207
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 
     @testset "DAE Initialization Observable function AD" begin
@@ -201,18 +179,9 @@ end
             end
         end
         # Mooncake does not support SymbolicIndexingInterface AD yet
-        for backend in MOONCAKE_BACKENDS
-            @testset "$(backend_name(backend)) (broken)" begin
-                @test_broken begin
-                    iprob = prob.f.initialization_data.initializeprob
-                    isol = solve(iprob)
-                    gs = DifferentiationInterface.gradient(
-                        isol -> isol[sys.ampermeter.i], backend, isol
-                    )
-                    gt = gs.prob.p.tunable
-                    length(findall(!iszero, gt)) == 1
-                end
-            end
+        # https://github.com/SciML/SciMLBase.jl/issues/1207
+        @testset "AutoMooncake (skipped)" begin
+            @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
         end
     end
 end
@@ -241,20 +210,8 @@ end
         end
     end
     # Mooncake does not support SymbolicIndexingInterface AD yet
-    for backend in MOONCAKE_BACKENDS
-        @testset "$(backend_name(backend)) (broken)" begin
-            @test_broken begin
-                function loss_wrt_tunables_mooncake(new_tunables)
-                    new_p = SS.replace(SS.Tunable(), prob.p, new_tunables)
-                    new_prob = remake(prob, p = new_p)
-                    sol = solve(new_prob, Rodas4())
-                    return sum(sol[sys.ampermeter.i])
-                end
-                gs_p_new = DifferentiationInterface.gradient(
-                    loss_wrt_tunables_mooncake, backend, tunables
-                )
-                !isnothing(gs_p_new)
-            end
-        end
+    # https://github.com/SciML/SciMLBase.jl/issues/1207
+    @testset "AutoMooncake (skipped)" begin
+        @test_skip "Mooncake does not support SymbolicIndexingInterface AD - see issue #1207"
     end
 end

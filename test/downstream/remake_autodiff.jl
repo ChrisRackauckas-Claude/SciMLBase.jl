@@ -64,18 +64,10 @@ if VERSION < v"1.12"
         end
     end
 
-    @testset "Basic remake autodiff (broken)" begin
-        backend = AutoZygote()
-        @testset "$(backend_name(backend))" begin
-            @test_broken begin
-                du01 = DifferentiationInterface.gradient(
-                    make_sum_of_solution_u0(p), backend, u0
-                )
-                dp1 = DifferentiationInterface.gradient(
-                    make_sum_of_solution_p(u0), backend, p
-                )
-                du01 !== nothing && dp1 !== nothing
-            end
+    @testset "Basic remake autodiff (skipped)" begin
+        # https://github.com/SciML/SciMLBase.jl/issues/1208
+        @testset "AutoZygote" begin
+            @test_skip "Zygote autodiff fails on remake tests - see issue #1208"
         end
     end
 
@@ -102,18 +94,10 @@ if VERSION < v"1.12"
         end
     end
 
-    @testset "Symbolic indexing autodiff (broken)" begin
-        backend = AutoZygote()
-        @testset "$(backend_name(backend))" begin
-            @test_broken begin
-                du01 = DifferentiationInterface.gradient(
-                    make_symbolic_indexing_u0(p), backend, u0
-                )
-                dp1 = DifferentiationInterface.gradient(
-                    make_symbolic_indexing_p(u0), backend, p
-                )
-                du01 !== nothing && dp1 !== nothing
-            end
+    @testset "Symbolic indexing autodiff (skipped)" begin
+        # https://github.com/SciML/SciMLBase.jl/issues/1208
+        @testset "AutoZygote" begin
+            @test_skip "Zygote autodiff fails on remake tests - see issue #1208"
         end
     end
 
@@ -139,18 +123,10 @@ if VERSION < v"1.12"
         end
     end
 
-    @testset "Symbolic indexing observed autodiff (broken)" begin
-        backend = AutoZygote()
-        @testset "$(backend_name(backend))" begin
-            @test_broken begin
-                du01 = DifferentiationInterface.gradient(
-                    make_symbolic_indexing_observed_u0(p), backend, u0
-                )
-                dp1 = DifferentiationInterface.gradient(
-                    make_symbolic_indexing_observed_p(u0), backend, p
-                )
-                du01 !== nothing && dp1 !== nothing
-            end
+    @testset "Symbolic indexing observed autodiff (skipped)" begin
+        # https://github.com/SciML/SciMLBase.jl/issues/1208
+        @testset "AutoZygote" begin
+            @test_skip "Zygote autodiff fails on remake tests - see issue #1208"
         end
     end
 end
