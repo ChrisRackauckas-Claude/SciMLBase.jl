@@ -220,6 +220,13 @@ end
 
 # This is mostly a fake struct and isn't used anywhere
 # But we need it for function calls like TwoPointBVProblem{iip}(...) = ...
+"""
+    TwoPointBVPFunction(args...; kwargs...)
+    TwoPointBVPFunction{iip}(args...; kwargs...)
+
+Construct a [`BVPFunction`](@ref) with `twopoint = Val(true)` for two-point
+boundary value problems.
+"""
 struct TwoPointBVPFunction{iip} end
 
 @inline function TwoPointBVPFunction(args...; kwargs...)
@@ -460,6 +467,13 @@ end
 
 # This is mostly a fake struct and isn't used anywhere
 # But we need it for function calls like TwoPointBVProblem{iip}(...) = ...
+"""
+    TwoPointDynamicalBVPFunction(args...; kwargs...)
+    TwoPointDynamicalBVPFunction{iip}(args...; kwargs...)
+
+Construct a [`DynamicalBVPFunction`](@ref) with `twopoint = Val(true)` for
+two-point second-order boundary value problems.
+"""
 struct TwoPointDynamicalBVPFunction{iip} end
 
 @inline function TwoPointDynamicalBVPFunction(args...; kwargs...)

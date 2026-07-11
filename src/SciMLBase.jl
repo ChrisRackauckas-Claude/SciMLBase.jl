@@ -57,7 +57,8 @@ using SciMLOperators: SciMLOperators
 using SciMLOperators:
     AbstractSciMLOperator,
     IdentityOperator, NullOperator,
-    InvertibleOperator, AbstractSciMLScalarOperator
+    InvertibleOperator, AbstractSciMLScalarOperator,
+    StaticWOperator, has_concretization
 
 import SciMLOperators:
     update_coefficients, update_coefficients!,
@@ -66,6 +67,24 @@ import SciMLOperators:
     has_mul, has_mul!, has_ldiv, has_ldiv!
 
 @reexport using SciMLOperators
+
+"""
+    StaticWOperator
+
+Re-export of `SciMLOperators.StaticWOperator`, an operator wrapper for
+precomputed linear solver factorizations used as Jacobian-like `W` operators in
+SciML solver internals.
+"""
+StaticWOperator
+
+"""
+    has_concretization(op)
+
+Re-export of `SciMLOperators.has_concretization`, which reports whether an
+operator can provide a concrete array representation for solver code that needs
+materialized matrix data.
+"""
+has_concretization
 
 using SciMLPublic: @public
 

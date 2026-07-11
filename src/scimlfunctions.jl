@@ -2106,8 +2106,12 @@ end
 
 """
 $(TYPEDEF)
-"""
 
+Function wrapper for vector-valued objective functions that represent multiple
+optimization objectives. It stores the same derivative, constraint, prototype,
+symbolic, and initialization metadata as [`OptimizationFunction`](@ref), with
+`f` returning the objective vector.
+"""
 struct MultiObjectiveOptimizationFunction{
         iip, AD, F, J, H, HV, C, CJ, CJV, CVJ, CH, HP, CJP, CHP, O,
         EX, CEX, SYS, LH, LHP, HCV, CJCV, CHCV, LHCV, ID,
@@ -5544,6 +5548,15 @@ islinear(::AbstractDiffEqFunction) = false
 islinear(f::ODEFunction) = islinear(f.f)
 islinear(f::SplitFunction) = islinear(f.f1)
 
+"""
+    IncrementingODEFunction(f)
+    IncrementingODEFunction{iip}(f)
+    IncrementingODEFunction{iip, specialize}(f)
+
+Wrap an ODE update function whose call mutates or returns increments rather than
+the full derivative state. `IncrementingODEProblem` constructors apply this
+wrapper before building the corresponding ODE problem.
+"""
 struct IncrementingODEFunction{iip, specialize, F} <: AbstractODEFunction{iip}
     f::F
 end

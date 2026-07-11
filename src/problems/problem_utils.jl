@@ -172,6 +172,13 @@ function Base.summary(io::IO, prob::AbstractEnsembleProblem)
 end
 Base.show(io::IO, mime::MIME"text/plain", A::AbstractEnsembleProblem) = summary(io, A)
 
+"""
+    NullParameters()
+
+Singleton parameter container used by SciML problems when no parameter object is
+provided. Indexing or iterating it throws a diagnostic error so accidental use of
+missing parameters is reported close to the source of the mistake.
+"""
 struct NullParameters end
 
 const NO_PARAMETERS_INDEX_ERROR_MESSAGE = """
