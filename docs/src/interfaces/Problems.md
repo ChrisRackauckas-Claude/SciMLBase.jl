@@ -70,6 +70,7 @@ problem constructor and let the selected solver perform any wrapping.
 
 ```@docs
 SciMLBase.specialization
+SciMLBase.should_opaque_p
 SciMLBase.isfunctionwrapper
 SciMLBase.wrapfun_oop
 SciMLBase.wrapfun_iip

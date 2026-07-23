@@ -276,3 +276,15 @@ end
     uf = SciMLBase.unwrapped_f(prob.f)
     @test SciMLBase.specialization(uf) === SciMLBase.AutoDePSpecialize
 end
+
+@testset "should_opaque_p policy" begin
+    # isbits, non-null → true
+    @test SciMLBase.should_opaque_p(DePParams(1.0))
+    @test SciMLBase.should_opaque_p(1.0)
+    @test SciMLBase.should_opaque_p((a = 1.0, b = 2))
+    # NullParameters → false (uniform singleton, nothing to erase)
+    @test !SciMLBase.should_opaque_p(SciMLBase.NullParameters())
+    # non-isbits → false by default
+    @test !SciMLBase.should_opaque_p([1.0, 2.0])
+    @test !SciMLBase.should_opaque_p("params")
+end

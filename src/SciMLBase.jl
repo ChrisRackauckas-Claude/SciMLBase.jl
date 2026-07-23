@@ -1734,6 +1734,22 @@ end
 specialization(f::AbstractSciMLFunction) = FullSpecialize
 
 """
+    should_opaque_p(p) -> Bool
+
+Default policy for whether the [`AutoDePSpecialize`](@ref) specialization level
+de-specializes a parameter object `p`: `true` when `p` is an `isbits` value and
+not a [`NullParameters`](@ref) sentinel, `false` otherwise.
+
+`NullParameters` is excluded because it is already a uniform singleton (nothing
+to erase) and downstream code introspects it directly. Non-`isbits` payloads are
+excluded by this default because de-specializing them requires a by-reference
+opaque container; a solver may override this policy to opt them in. Solver stacks
+(e.g. DiffEqBase, NonlinearSolve) call this to decide, uniformly, when to route a
+problem through the opaque-parameter path.
+"""
+@inline should_opaque_p(p) = isbits(p) && !(p isa NullParameters)
+
+"""
 $(TYPEDEF)
 
 Compatibility supertype for ODE-like function containers that carry explicit
@@ -2206,6 +2222,7 @@ export ODEAliasSpecifier, LinearAliasSpecifier
 # Function-wrapper / solution interface helpers
 @public unwrapped_f, specialization, solution_new_retcode
 @public isfunctionwrapper, wrapfun_oop, wrapfun_iip, unwrap_fw
+@public should_opaque_p
 
 # Low-level solver-author extension entry points
 @public __solve, __init
