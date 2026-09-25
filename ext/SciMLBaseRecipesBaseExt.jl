@@ -217,7 +217,7 @@ using RecursiveArrayTools: VectorOfArray, vecarr_to_vectors
     end
 end
 
-function integplot_vecs_and_labels(dims, vars, plott, integrator, denseplot)
+function integplot_vecs_and_labels(vars, plott, integrator, denseplot)
     varsyms = variable_symbols(integrator)
 
     batch_symbolic_vars = []
@@ -244,6 +244,7 @@ function integplot_vecs_and_labels(dims, vars, plott, integrator, denseplot)
 
     plot_vecs = []
     labels = String[]
+    dims = 0
     idxx = 0
     for x in vars
         tmp = []
@@ -266,6 +267,18 @@ function integplot_vecs_and_labels(dims, vars, plott, integrator, denseplot)
         end
 
         tmp = map(x[1], tmp...)
+        series_dims = length(tmp[1])
+        if isempty(plot_vecs)
+            dims = series_dims
+        elseif series_dims != dims
+            throw(
+                ArgumentError(
+                    "Plot idxs series must all have the same output dimension, but got $dims and $series_dims. " *
+                        "Output dimension is the number of coordinates returned by each series transform " *
+                        "(e.g. `(t, u)` is 2-D), not the number of input indices in the idxs tuple."
+                )
+            )
+        end
         tmp = tuple((getindex.(tmp, i) for i in eachindex(tmp[1]))...)
         for i in eachindex(tmp)
             if length(plot_vecs) < i
@@ -319,14 +332,9 @@ end
         nothing
     end
 
-    dims = length(int_vars[1]) - 1
-    for var in int_vars
-        @assert length(var) - 1 == dims
-    end
-
     plot_vecs,
         labels = integplot_vecs_and_labels(
-        dims, int_vars, plott, integrator, denseplot
+        int_vars, plott, integrator, denseplot
     )
 
     xflip --> integrator.tdir < 0
